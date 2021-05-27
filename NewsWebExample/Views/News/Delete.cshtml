@@ -1,0 +1,15 @@
+﻿@model NewsWebExample.ViewModels.NewsViewModel
+@{
+    ViewData["Title"] = "Delete news";
+}
+<h1>Are you sure that you want to delete news?</h1>
+<h3>@Model.Name</h3>
+
+<form asp-controller="News" asp-action="Delete" method="POST">
+    <input asp-for="Id" type="hidden" />
+    <div class="mt-3">
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a role="button" asp-action="Details" asp-controller="News" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+    </div>
+
+</form>

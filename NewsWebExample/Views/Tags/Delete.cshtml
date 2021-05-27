@@ -1,0 +1,14 @@
+﻿@model NewsWebExample.ViewModels.TagViewModel
+@{
+    ViewData["Title"] = "Delete tag";
+}
+<h1>Are you sure that you want to delete tag?</h1>
+<h3>@Model.Name</h3>
+
+<form asp-controller="Tags" asp-action="Delete" method="POST">
+    <input asp-for="Id" type="hidden" />
+    <div class="mt-3">
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a role="button" asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>

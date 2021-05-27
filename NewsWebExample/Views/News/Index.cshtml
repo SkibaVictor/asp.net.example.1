@@ -1,0 +1,49 @@
+﻿@model NewsWebExample.ViewModels.NewsIndexViewModel
+@{
+    ViewData["Title"] = "News page";
+}
+
+<h1>News list for @(Model.CurrentTag != null ? Model.Tags.First(x => x.Id == Model.CurrentTag).Name : "All tags")</h1>
+
+<div class="d-flex mb-4">
+    <div class="dropdown">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+            Filter by tag
+        </button>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" asp-action="Index" asp-route-tagId="@null">All</a>
+            @foreach (var tag in Model.Tags)
+            {
+                <a class="dropdown-item" asp-action="Index" asp-route-tagId="@tag.Id">@tag.Name</a>
+            }
+        </div>
+    </div>
+    <a class="btn btn-success pl-4 pr-4 ml-4"
+       asp-action="Create">Add news</a>
+</div>
+
+
+@if (Model.News.Any())
+{
+    <div class="list-group">
+        @foreach (var news in Model.News)
+        {
+            <a class="list-group-item list-group-item-action" asp-controller="News" asp-action="Details" asp-route-id="@news.Id">
+                <h4>@news.Name</h4>
+                <div>
+                    @foreach (var tag in news.Tags)
+                    {
+                        <span class="badge badge-primary">@tag</span>
+                    }
+                </div>
+                <p>@news.CreateDateTime.ToShortDateString()</p>
+            </a>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        List of news is empty!
+    </div>
+}

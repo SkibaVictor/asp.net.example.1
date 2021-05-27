@@ -1,0 +1,28 @@
+﻿@model NewsWebExample.ViewModels.NewsViewModel
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<h1>@Model.Name</h1>
+<p>News from: @Model.NewsDate.ToShortDateString()</p>
+
+<div class="d-flex">
+    <a class="btn btn-warning pl-4 pr-4 mr-3" asp-controller="News" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+    <a class="btn btn-danger pl-4 pr-4 mr-3" asp-controller="News" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+</div>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <h4>
+            @Model.Content
+        </h4>
+    </div>
+</div>
+
+<div class="mt-3">
+    <p>Tags:</p>
+    @foreach (var tag in Model.Tags)
+    {
+        <a asp-controller="News" asp-action="Index" asp-route-tagId="@tag.Id" class="mr-4">@tag.Name</a>
+    }
+</div>

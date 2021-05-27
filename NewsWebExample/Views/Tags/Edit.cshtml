@@ -1,0 +1,13 @@
+﻿@model NewsWebExample.ViewModels.TagEditViewModel
+@{
+    ViewData["Title"] = "Edit tag";
+}
+
+<form asp-action="Edit" asp-controller="Tags" method="POST">
+    <input asp-for="Id" type="hidden" />
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input type="text" asp-for="Name" class="form-control" />
+    </div>
+    <button class="btn btn-success pl-4 pr-4" type="submit">Save</button>
+</form>

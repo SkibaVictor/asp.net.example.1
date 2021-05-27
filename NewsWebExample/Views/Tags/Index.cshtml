@@ -1,0 +1,30 @@
+﻿@model List<NewsWebExample.ViewModels.TagViewModel>
+@{
+    ViewData["Title"] = "Tags page";
+}
+
+<h1>Tags list</h1>
+
+<a asp-action="Create" asp-controller="Tags" class="btn btn-primary mb-3 mt-3">Create</a>
+
+@if (Model.Any())
+{
+    <div class="list-group">
+        @foreach (var item in Model)
+        {
+            <div class="list-group-item d-flex justify-content-between">
+                <span class="align-self-center"> @item.Name</span>
+                <div>
+                    <a class="btn btn-warning btn-sm mr-2" asp-controller="Tags" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <a class="btn btn-danger btn-sm" asp-controller="Tags" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        List of tags is empty yet!
+    </div>
+}

@@ -1,0 +1,33 @@
+﻿@model NewsWebExample.ViewModels.NewsEditViewModel
+@{
+    ViewData["Title"] = "Edit news";
+}
+<form asp-action="Edit" asp-controller="News" method="POST">
+    <input asp-for="Id" type="hidden" />
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input required type="text" asp-for="Name" class="form-control" />
+        <span class="text-danger" asp-validation-for="Name"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Content"></label>
+        <textarea required type="text" asp-for="Content" class="form-control"></textarea>
+        <span class="text-danger" asp-validation-for="Content"></span>
+    </div>
+    <label asp-for="Tags"></label>
+    <select multiple required class="form-control" id="sel2" asp-for="SelectedTags">
+        @foreach (var tag in Model.Tags)
+        {
+            @if (Model.SelectedTags != null && Model.SelectedTags.Any(x => x == tag.Id))
+            {
+                <option selected value="@tag.Id">@tag.Name</option>
+            }
+            else
+            {
+                <option value="@tag.Id">@tag.Name</option>
+            }
+        }
+    </select>
+    <span class="text-danger" asp-validation-for="SelectedTags"></span>
+    <button class="btn btn-success pl-4 pr-4" type="submit">Save</button>
+</form>
