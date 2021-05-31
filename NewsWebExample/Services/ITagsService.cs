@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -17,12 +18,14 @@ namespace NewsWebExample.Services
         void Edit(TagEditViewModel model);
         void Create(TagCreateViewModel model);
         void Delete(TagViewModel model);
+        string[] GetAllowedExtensions();
     }
 
     public class TagsService : ITagsService
     {
         private ApplicationContext Context { get; }
         private IMapper Mapper { get; }
+        private static string[] AllowedExtensions { get; set; } = { "jpg", "jpeg", "png" };
         public TagsService(ApplicationContext context, IMapper mapper)
         {
             Context = context;
@@ -51,12 +54,36 @@ namespace NewsWebExample.Services
         {
             var tag = GetById(model.Id);
             tag.Name = model.Name;
+            if (model.File != null)
+            {
+                byte[] imageData;
+                using (var binaryReader = 
+                    new BinaryReader(model.File.OpenReadStream()))
+                {
+                    imageData = binaryReader
+                        .ReadBytes((int)model.File.Length);
+                }
+
+                tag.Picture = imageData;
+            }
             Context.SaveChanges();
         }
 
         public void Create(TagCreateViewModel model)
         {
             var tag = Mapper.Map<Tag>(model);
+
+            if (model.File != null)
+            {
+                byte[] imageData = null;
+                using (var binaryReader = new BinaryReader(model.File.OpenReadStream()))
+                {
+                    imageData = binaryReader.ReadBytes((int)model.File.Length);
+                }
+
+                tag.Picture = imageData;
+            }
+
             Context.Tags.Add(tag);
             Context.SaveChanges();
         }
@@ -88,6 +115,11 @@ namespace NewsWebExample.Services
             Context.NewsToTags.RemoveRange(tag.TagNews);
             Context.Tags.Remove(tag);
             Context.SaveChanges();
+        }
+
+        public string[] GetAllowedExtensions()
+        {
+            return AllowedExtensions;
         }
 
         private Tag GetById(int id)

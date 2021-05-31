@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.IO;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using NewsWebExample.Services;
 using NewsWebExample.ViewModels;
 
@@ -8,6 +12,7 @@ namespace NewsWebExample.Controllers
     {
         private INewsService NewsService { get; }
         private ITagsService TagsService { get; }
+        
         public NewsController(INewsService newsService,
             ITagsService tagsService)
         {
@@ -27,6 +32,7 @@ namespace NewsWebExample.Controllers
 
         public IActionResult Create()
         {
+            ViewBag.AllowedExtensions = NewsService.GetAllowedExtensions();
             return View(NewsService.GetCreateViewModel());
         }
 
@@ -43,6 +49,12 @@ namespace NewsWebExample.Controllers
             try
             {
                 NewsService.Create(model);
+            }
+            catch (ArgumentException)
+            {
+                ModelState.AddModelError(nameof(model.File), "This file type is prohibited");
+                model.Tags = TagsService.GetAll();
+                return View(model);
             }
             catch
             {
@@ -70,6 +82,12 @@ namespace NewsWebExample.Controllers
             try
             {
                 NewsService.Edit(model);
+            }
+            catch (ArgumentException)
+            {
+                ModelState.AddModelError(nameof(model.File), "This file type is prohibited");
+                model.Tags = TagsService.GetAll();
+                return View(model);
             }
             catch
             {

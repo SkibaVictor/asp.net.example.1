@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace NewsWebExample.ViewModels
 {
-    public class TagViewModel
+    public class AttachmentViewModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
-        public byte[] Picture { get; set; }
+        public string Path { get; set; }
     }
 }

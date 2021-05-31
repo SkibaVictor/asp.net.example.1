@@ -8,6 +8,7 @@ namespace NewsWebExample.Data
     public class Tag : BaseEntity
     {
         public string Name { get; set; }
+        public byte[] Picture { get; set; }
         public List<NewsToTag> TagNews { get; set; }
     }
 }

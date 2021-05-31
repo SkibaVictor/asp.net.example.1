@@ -13,7 +13,15 @@
         @foreach (var item in Model)
         {
             <div class="list-group-item d-flex justify-content-between">
-                <span class="align-self-center"> @item.Name</span>
+                <div>
+                    @if (item.Picture != null && item.Picture.Length != 0)
+                    {
+                        <img width="50" height="50" 
+                             src="data:image/jpeg;base64,@(Convert.ToBase64String(item.Picture))"/>
+                    }
+                    <span class="align-self-center"> @item.Name</span>
+                </div>
+                
                 <div>
                     <a class="btn btn-warning btn-sm mr-2" asp-controller="Tags" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                     <a class="btn btn-danger btn-sm" asp-controller="Tags" asp-action="Delete" asp-route-id="@item.Id">Delete</a>

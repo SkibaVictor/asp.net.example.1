@@ -13,6 +13,7 @@ namespace NewsWebExample.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<News> News { get; set; }
         public DbSet<NewsToTag> NewsToTags { get; set; }
+        public DbSet<Attachment> Attachments { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
@@ -24,9 +25,11 @@ namespace NewsWebExample.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Tag>().HasKey(x => x.Id);
             modelBuilder.Entity<News>().HasKey(x => x.Id);
+            modelBuilder.Entity<News>().HasOne(x => x.Attachment);
             modelBuilder.Entity<NewsToTag>().HasKey(x => x.Id);
             modelBuilder.Entity<NewsToTag>().HasOne(x => x.News).WithMany(x => x.NewsTags);
             modelBuilder.Entity<NewsToTag>().HasOne(x => x.Tag).WithMany(x => x.TagNews);
+            modelBuilder.Entity<Attachment>().HasKey(x => x.Id);
         }
 
         public override int SaveChanges()

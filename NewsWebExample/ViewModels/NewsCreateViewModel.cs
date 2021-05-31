@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace NewsWebExample.ViewModels
 {
@@ -18,6 +19,7 @@ namespace NewsWebExample.ViewModels
         public string Content { get; set; }
         public List<TagViewModel> Tags { get; set; }
         public List<int> SelectedTags { get; set; }
+        public IFormFile File { get; set; }
     }
 
     public class NewsEditViewModel : NewsCreateViewModel

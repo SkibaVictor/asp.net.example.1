@@ -1,0 +1,22 @@
+﻿@using NewsWebExample.App_Code
+<div class="mt-3">
+    @Html.GenerateSimpleList(new List<ListItem>
+    {
+        new ListItem
+        {
+            Content = "List item 1",
+            Title = "Title 1"
+        },
+        new ListItem
+        {
+            Content = "List item 2",
+            Title = "Title 2"
+        },
+        new ListItem
+        {
+            Content = "List item 3",
+            Title = "Title 3"
+        }
+    })
+</div>
+

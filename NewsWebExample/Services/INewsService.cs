@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using NewsWebExample.Data;
 using NewsWebExample.ViewModels;
@@ -18,6 +21,7 @@ namespace NewsWebExample.Services
         void Edit(NewsEditViewModel model);
         void Delete(NewsViewModel model);
         NewsCreateViewModel GetCreateViewModel();
+        string[] GetAllowedExtensions();
     }
 
     public class NewsService : INewsService
@@ -25,14 +29,18 @@ namespace NewsWebExample.Services
         private ApplicationContext Context { get; }
         private IMapper Mapper { get; }
         private ITagsService TagsService { get; }
+        private IWebHostEnvironment AppEnvironment { get; }
+        private static string[] AllowedExtensions { get; set; } = { "jpg", "jpeg", "png" };
 
         public NewsService(ApplicationContext context,
             IMapper mapper,
-            ITagsService tagsService)
+            ITagsService tagsService,
+            IWebHostEnvironment appEnvironment)
         {
             Context = context;
             Mapper = mapper;
             TagsService = tagsService;
+            AppEnvironment = appEnvironment;
         }
 
         public NewsIndexViewModel GetIndexViewModel(int? tagId)
@@ -64,7 +72,13 @@ namespace NewsWebExample.Services
 
         public NewsViewModel GetViewModel(int id)
         {
-            return Mapper.Map<NewsViewModel>(GetById(id));
+            var news = GetById(id);
+            var mapped = Mapper.Map<NewsViewModel>(news);
+            if (news.Attachment != null)
+            {
+                mapped.Attachment = Mapper.Map<AttachmentViewModel>(news.Attachment);
+            }
+            return mapped;
         }
 
         public NewsEditViewModel GetEditViewModel(int id)
@@ -82,11 +96,37 @@ namespace NewsWebExample.Services
             var news = Mapper.Map<News>(model);
             foreach (var tag in selectedTags)
             {
-                var newsToTag = new NewsToTag { News = news, Tag = tag };
+                var newsToTag = new NewsToTag {News = news, Tag = tag};
                 Context.NewsToTags.Add(newsToTag);
                 news.NewsTags.Add(newsToTag);
                 tag.TagNews.Add(newsToTag);
             }
+
+            if (model.File != null)
+            {
+                var extension = Path.GetExtension(model.File.FileName)?.Replace(".", "");
+                if (!AllowedExtensions.Contains(extension))
+                {
+                    throw new ArgumentException();
+                }
+
+                var fileId = Guid.NewGuid();
+                var path = $"Files/{fileId}_{model.File.FileName}";
+                using (var fileStream = new FileStream(Path.Combine(AppEnvironment.WebRootPath, path), 
+                    FileMode.Create))
+                {
+                    model.File.CopyTo(fileStream);
+                }
+                var attachment = new Attachment 
+                    { 
+                        Name = model.File.FileName, 
+                        Path = path, 
+                        Id = fileId
+                    };
+                news.Attachment = attachment;
+                Context.Attachments.Add(attachment);
+            }
+
             Context.News.Add(news);
             Context.SaveChanges();
         }
@@ -113,6 +153,37 @@ namespace NewsWebExample.Services
                 }
             }
 
+            if (model.File != null)
+            {
+                var extension = Path.GetExtension(model.File.FileName)?.Replace(".", "");
+                if (!AllowedExtensions.Contains(extension))
+                {
+                    throw new ArgumentException();
+                }
+
+                var fileId = Guid.NewGuid();
+                var path = $"Files/{fileId}_{model.File.FileName}";
+                using (var fileStream = new FileStream(Path.Combine(AppEnvironment.WebRootPath, path), 
+                    FileMode.Create))
+                {
+                    model.File.CopyTo(fileStream);
+                }
+                var attachment = new Attachment { Name = model.File.FileName, Path = path, Id = fileId };
+
+                var attachmentToDelete = news.Attachment;
+                if (attachmentToDelete != null)
+                {
+                    if (File.Exists(AppEnvironment.WebRootPath + attachmentToDelete.Path))
+                    {
+                        File.Delete(AppEnvironment.WebRootPath + attachmentToDelete.Path);
+                    }
+                    Context.Attachments.Remove(attachmentToDelete);
+                }
+                
+                news.Attachment = attachment;
+                Context.Attachments.Add(attachment);
+            }
+
             Context.SaveChanges();
         }
 
@@ -134,9 +205,15 @@ namespace NewsWebExample.Services
             };
         }
 
+        public string[] GetAllowedExtensions()
+        {
+            return AllowedExtensions;
+        }
+
         private News GetById(int id)
         {
             var news = Context.News
+                .Include(x => x.Attachment)
                 .Include(x => x.NewsTags)
                 .ThenInclude(x => x.Tag)
                 .FirstOrDefault(x => x.Id == id);

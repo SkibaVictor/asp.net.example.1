@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Edit news";
 }
-<form asp-action="Edit" asp-controller="News" method="POST">
+<form asp-action="Edit" asp-controller="News" method="POST" enctype="multipart/form-data">
     <input asp-for="Id" type="hidden" />
     <div class="form-group">
         <label asp-for="Name"></label>
@@ -28,6 +28,11 @@
             }
         }
     </select>
+    <div class="form-group">
+        <label asp-for="File"></label>
+        <input type="file" asp-for="File" class="border form-control-file" />
+        <span class="text-danger" asp-validation-for="File"></span>
+    </div>
     <span class="text-danger" asp-validation-for="SelectedTags"></span>
     <button class="btn btn-success pl-4 pr-4" type="submit">Save</button>
 </form>

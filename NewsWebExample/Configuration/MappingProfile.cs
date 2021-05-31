@@ -18,6 +18,7 @@ namespace NewsWebExample.Configuration
             CreateMap<News, NewsViewModel>()
                 .ForMember(x => x.Tags, opt => opt.MapFrom(t => t.NewsTags.Select(tt => tt.Tag)))
                 .ForMember(x => x.NewsDate, opt => opt.MapFrom(t => t.CreateDateTime))
+                .ForMember(x => x.Attachment, opt => opt.Ignore())
                 .IncludeAllDerived();
             CreateMap<News, NewsEditViewModel>()
                 .ForMember(x => x.SelectedTags, opt => opt.MapFrom(t => t.NewsTags.Select(tt => tt.Tag.Id)))
@@ -26,6 +27,7 @@ namespace NewsWebExample.Configuration
                 .ForMember(x => x.Tags, opt => opt.MapFrom(t => t.NewsTags.Select(tt => tt.Tag.Name)));
             CreateMap<NewsCreateViewModel, News>()
                 .ForMember(x => x.NewsTags, opt => opt.Ignore());
+            CreateMap<Attachment, AttachmentViewModel>();
         }
     }
 }

@@ -12,5 +12,6 @@ namespace NewsWebExample.ViewModels
         public string Name { get; set; }
         public string Content { get; set; }
         public List<TagViewModel> Tags { get; set; }
+        public AttachmentViewModel Attachment { get; set; }
     }
 }

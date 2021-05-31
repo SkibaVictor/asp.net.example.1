@@ -3,12 +3,17 @@
     ViewData["Title"] = "Add tag";
 }
 
-<form asp-action="Create" asp-controller="Tags" method="POST">
+@using (Html.BeginForm("Create", "Tags", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
     <div class="form-group">
-        <label asp-for="Name"></label>
-        <input type="text" asp-for="Name" class="form-control" />
+        @Html.LabelFor(x => x.Name, new { @class = "font-weight-bold" })
+        @Html.TextBoxFor(x => x.Name, new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        <label asp-for="File"></label>
+        <input type="file" asp-for="File" class="border form-control-file" />
+        <span class="text-danger" asp-validation-for="File"></span>
     </div>
     <button class="btn btn-success pl-4 pr-4" type="submit">Save</button>
-</form>
-
+}
 
