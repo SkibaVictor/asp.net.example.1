@@ -16,7 +16,7 @@ namespace NewsWebExample.Configuration
             CreateMap<Tag, TagEditViewModel>();
             CreateMap<TagCreateViewModel, Tag>();
             CreateMap<News, NewsViewModel>()
-                .ForMember(x => x.Tags, opt => opt.MapFrom(t => t.NewsTags.Select(tt => tt.Tag)))
+                .ForMember(x => x.Tags, opt => opt.Ignore())
                 .ForMember(x => x.NewsDate, opt => opt.MapFrom(t => t.CreateDateTime))
                 .ForMember(x => x.Attachment, opt => opt.Ignore())
                 .IncludeAllDerived();

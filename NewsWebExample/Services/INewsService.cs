@@ -78,6 +78,12 @@ namespace NewsWebExample.Services
             {
                 mapped.Attachment = Mapper.Map<AttachmentViewModel>(news.Attachment);
             }
+
+            //mapped.Tags = news.NewsTags.Select(x => Mapper.Map<TagViewModel>(x.Tag)).ToList();
+
+            var tags = news.NewsTags.Select(x => x.Tag);
+            var mappedTags = Mapper.Map<List<TagViewModel>>(tags);
+            mapped.Tags = mappedTags;
             return mapped;
         }
 
